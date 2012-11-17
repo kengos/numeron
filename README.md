@@ -10,7 +10,7 @@ iPhoneアプリ  ... https://itunes.apple.com/jp/app/numer0n-numeron/id512484171
 
 基本
 
-```
+```ruby
 calc = Numeron::Calculator.new
 calc.input('123', 0, 1) # callした番号, Eatの数, Biteの数
 p calc.possibilities # 答えの可能性の一覧がでてくる
@@ -23,7 +23,7 @@ p calc.possibilities
 
 Shuffle対応(ほとんどテストはしていない)
 
-```
+```ruby
 calc = Numeron::Calculator.new
 calc.input('123', 0, 3)
 calc.shuffle # シャッフルされた
