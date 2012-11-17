@@ -50,6 +50,34 @@ describe Numeron::Calculator do
     end
   end
 
+  describe "#shuffle" do
+    it "0e3b" do
+      calc.input('123', 0, 3)
+      calc.shuffle
+      calc.possibilities.should =~ %w(123 132 213 231 312 321)
+    end
+
+    it "2e0b" do
+      calc.input('123', 2, 0)
+      calc.shuffle
+      # 12?, 13?, 21?, 23?, 31?, 32? が3パターン, ? = [0, 4, 5, 6, 7, 8, 9]
+      # => 6 * 3 * 7=  126
+      calc.possibilities.should have(126).items
+    end
+
+    it "1e1b" do
+      calc.input('123', 1, 1)
+      calc.shuffle
+      calc.possibilities.should have(126).items
+    end
+
+    it "1e0b" do
+      calc.input('123', 1, 0)
+      calc.shuffle
+      calc.possibilities.should have(378).items
+    end
+  end
+
   describe "scenario" do
     it "1e0b, 1e2b" do
       calc.input('348', 1, 0)
@@ -88,6 +116,12 @@ describe Numeron::Calculator do
       calc.input('123', 0, 1)
       calc.input('456', 0, 1)
       calc.possibilities.should have(96).items
+    end
+
+    it "0e1b, 2e0b" do
+      calc.input('123', 0, 1)
+      calc.input('245', 2, 0)
+      calc.possibilities.tapp #should have(96).items
     end
   end
 end

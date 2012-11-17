@@ -225,6 +225,99 @@ module Numeron
       end
     end
 
+    # シャッフル
+    def shuffle
+      @mays[0] = @mays[0] | @mays[1] | @mays[2]
+      @mays[1] = @mays[0] | @mays[1] | @mays[2]
+      @mays[2] = @mays[0] | @mays[1] | @mays[2]
+      list = []
+      @mays[0].each do |i|
+        @mays[1].each do |j|
+          next if i == j
+          @mays[2].each do |k|
+            next if i == k || j == k
+            list << validation(i, j, k)
+          end
+        end
+      end
+      @possibilities = list
+      @histories.each do |history|
+        eat_and_bite = history[1] + history[2]
+        if eat_and_bite == 1
+          one_eat_or_one_bite(history[0])
+        elsif eat_and_bite == 2
+          two_eat_or_two_bite(history[0])
+        end
+      end
+    end
+
+    def one_eat_or_one_bite(attack)
+      list = []
+      # attack[0] - attack[3]が一桁目に含まれている
+      (@mays[1] - attack).each do |j|
+        (@mays[2] - attack).each do |k|
+          next if j == k
+          list << validation(attack[0], j, k)
+          list << validation(attack[1], j, k)
+          list << validation(attack[2], j, k)
+        end
+      end
+      (@mays[0] - attack).each do |i|
+        # attack[0..3]が2桁目に含まれている
+        (@mays[2] - attack).each do |k|
+          next if i == k
+          list << validation(i, attack[0], k)
+          list << validation(i, attack[1], k)
+          list << validation(i, attack[2], k)
+        end
+        # attack[0..3]が3桁目に含まれている
+        (@mays[1] - attack).each do |j|
+          next if i == j
+          list << validation(i, j, attack[0])
+          list << validation(i, j, attack[1])
+          list << validation(i, j, attack[2])
+        end
+      end
+      list.compact!
+      update_possibilities(list)
+    end
+
+    def two_eat_or_two_bite(attack)
+      list = []
+      # 末尾が不明
+      (@mays[2] - attack).each do |k|
+        list << validation(attack[0], attack[1], k)
+        list << validation(attack[0], attack[2], k)
+        list << validation(attack[1], attack[0], k)
+        list << validation(attack[1], attack[2], k)
+        list << validation(attack[2], attack[0], k)
+        list << validation(attack[2], attack[1], k)
+      end
+
+      # 真ん中が不明
+      (@mays[1] - attack).each do |j|
+        list << validation(attack[0], j, attack[1])
+        list << validation(attack[0], j, attack[2])
+        list << validation(attack[1], j, attack[0])
+        list << validation(attack[1], j, attack[2])
+        list << validation(attack[2], j, attack[0])
+        list << validation(attack[2], j, attack[1])
+      end
+
+      # 先頭が不明
+      (@mays[0] - attack).each do |i|
+        list << validation(i, attack[0], attack[1])
+        list << validation(i, attack[0], attack[2])
+        list << validation(i, attack[1], attack[0])
+        list << validation(i, attack[1], attack[2])
+        list << validation(i, attack[2], attack[0])
+        list << validation(i, attack[2], attack[1])
+      end
+
+      list.compact!
+      update_possibilities(list)
+    end
+
     def update_possibilities(possibilities)
       @possibilities = @possibilities.nil? ? possibilities : possibilities & @possibilities
     end
