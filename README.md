@@ -3,6 +3,7 @@
 ヌメロンの解の探索プログラム (Ruby版) (作成中)
 
 Androidアプリ ... https://play.google.com/store/apps/details?id=com.jpn.gemstone.numer0n.android
+
 iPhoneアプリ  ... https://itunes.apple.com/jp/app/numer0n-numeron/id512484171?mt=8
 
 ## Usage
