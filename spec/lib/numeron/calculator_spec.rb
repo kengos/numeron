@@ -65,5 +65,29 @@ describe Numeron::Calculator do
       calc.input('416', 0, 1)
       calc.possibilities.should =~ ['571', '751']
     end
+
+    it "0e1b, 0e1b" do
+      calc.input('123', 0, 1)
+      calc.input('245', 0, 1)
+      calc.possibilities.should have(75).items
+    end
+
+    it "0e1b, 0e1b 2" do
+      calc.input('123', 0, 1)
+      calc.input('235', 0, 1)
+      calc.possibilities.should have(78).items
+    end
+
+    it "0e1b, 0e1b 3" do
+      calc.input('123', 0, 1)
+      calc.input('145', 0, 1)
+      calc.possibilities.should have(90).items
+    end
+
+    it "0e1b, 0e1b 4" do
+      calc.input('123', 0, 1)
+      calc.input('456', 0, 1)
+      calc.possibilities.should have(96).items
+    end
   end
 end

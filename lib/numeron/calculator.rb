@@ -33,13 +33,10 @@ module Numeron
         one_eat_zero_bite(attack)
       elsif eat == 2 && bite == 0
         two_eat_zero_bite(attack)
-      elsif eat == 3
-        puts "Success"
-        return true
       else
-        puts "Invalid!"
+        return false
       end
-      return false
+      return true
     end
 
     def zero_eat_zero_bite(attack)
