@@ -49,4 +49,21 @@ describe Numeron::Calculator do
       calc.possibilities.should have(21).items
     end
   end
+
+  describe "scenario" do
+    it "1e0b, 1e2b" do
+      calc.input('348', 1, 0)
+      calc.input('123', 1, 2)
+      calc.possibilities.should == ['321']
+    end
+
+    it "3eat is 571" do
+      calc.input('123', 0, 1)
+      calc.input('245', 0, 1)
+      calc.input('367', 0, 1)
+      calc.input('890', 0, 0)
+      calc.input('416', 0, 1)
+      calc.possibilities.should =~ ['571', '751']
+    end
+  end
 end
