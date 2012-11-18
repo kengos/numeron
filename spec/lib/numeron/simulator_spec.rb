@@ -3,6 +3,30 @@
 require 'spec_helper'
 
 describe Numeron::Simulator do
+
+  describe '#run' do
+    let(:simulator) { Numeron::Simulator.new }
+    it 'should give a block' do
+      result = simulator.run(['308', '259'], '123') do |calculator|
+        calculator.possibilities.sample
+      end
+      result.should have(2).items
+      result[0][:answer].should eql '308'
+      result[0][:times].should > 0
+      result[1][:answer].should eql '259'
+      result[1][:times].should > 0
+    end
+  end
+
+  describe '#calc_answer' do
+    let(:simulator) { Numeron::Simulator.new }
+    it 'should give a block' do
+      simulator.calc_answer('630', '123') do |calculator|
+        calculator.possibilities.sample
+      end.should >= 1
+    end
+  end
+
   describe '#eat_and_bite' do
     let(:answer) { '987' }
     subject { Numeron::Simulator.new.eat_and_bite(answer, input) }
