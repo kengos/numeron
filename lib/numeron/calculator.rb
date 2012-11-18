@@ -8,14 +8,13 @@ module Numeron
       @histories = []
       @mays = [(0..9).to_a, (0..9).to_a, (0..9).to_a]
       @possibilities = nil
-      @test_mode = false
     end
 
     def input(attack, eat, bite)
       attack = attack.split(//).map(&:to_i)
       eat = eat.to_i
       bite = bite.to_i
-      @histories << [attack, eat, bite]
+      @histories << {attack: attack, eat: eat, bite: bite}
 
       if eat == 0 && bite == 0
         zero_eat_zero_bite(attack)
@@ -54,11 +53,11 @@ module Numeron
           end
         end
       end
-      list.compact!
       update_possibilities(list)
     end
 
     def zero_eat_one_bite(attack)
+      # 各桁のeatの可能性がなくなる
       @mays[0] = @mays[0] - [attack[0]]
       @mays[1] = @mays[1] - [attack[1]]
       @mays[2] = @mays[2] - [attack[2]]
@@ -87,7 +86,6 @@ module Numeron
           list << validation(attack[2], j, k) if attack[2] != j || attack[2] != k
         end
       end
-      list.compact!
       update_possibilities(list)
     end
 
@@ -117,11 +115,11 @@ module Numeron
         list << validation(attack[1], attack[2], f)
         list << validation(attack[2], attack[0], f)
       end
-      list.compact!
       update_possibilities(list)
     end
 
     def zero_eat_three_bite(attack)
+      # 各桁の可能性が2つに絞られる
       @mays[0] = @mays[0] & [attack[1], attack[2]]
       @mays[1] = @mays[1] & [attack[0], attack[2]]
       @mays[2] = @mays[2] & [attack[0], attack[1]]
@@ -134,6 +132,7 @@ module Numeron
 
     def one_eat_zero_bite(attack)
       list = []
+      # 先頭eat
       (@mays[1] - attack).each do |j|
         (@mays[2] - attack).each do |k|
           next if j == k
@@ -156,7 +155,6 @@ module Numeron
           list << validation(i, j, attack[2])
         end
       end
-      list.compact!
       update_possibilities(list)
     end
 
@@ -182,12 +180,11 @@ module Numeron
       (@mays[1] - attack).each do |f|
         list << validation(attack[1], f, attack[2])
       end
-
       update_possibilities(list)
     end
 
     def one_eat_two_bite(attack)
-      # 123 => 021 or 210 or 102
+      # attack以外の可能性がなくなるので、積
       @mays[0] = @mays[0] & attack
       @mays[1] = @mays[1] & attack
       @mays[2] = @mays[2] & attack
@@ -200,19 +197,19 @@ module Numeron
     end
 
     def two_eat_zero_bite(attack)
-      # 012 => 021 or 210 or 102
       # 先頭2つがeat
       list = []
       (@mays[2] - attack).each do |k|
         list << validation(attack[0], attack[1], k)
       end
+      # 先頭、末尾がeat
       (@mays[1] - attack).each do |j|
         list << validation(attack[0], j, attack[2])
       end
+      # 真ん中、末尾がeat
       (@mays[0] - attack).each do |i|
         list << validation(i ,attack[1], attack[2])
       end
-      list.compact!
       update_possibilities(list)
     end
 
@@ -240,13 +237,13 @@ module Numeron
           end
         end
       end
-      @possibilities = list
+      @possibilities = list.compact
       @histories.each do |history|
-        eat_and_bite = history[1] + history[2]
+        eat_and_bite = history[:eat] + history[:bite]
         if eat_and_bite == 1
-          one_eat_or_one_bite(history[0])
+          one_eat_or_one_bite(history[:attack])
         elsif eat_and_bite == 2
-          two_eat_or_two_bite(history[0])
+          two_eat_or_two_bite(history[:attack])
         end
       end
     end
@@ -278,7 +275,6 @@ module Numeron
           list << validation(i, j, attack[2])
         end
       end
-      list.compact!
       update_possibilities(list)
     end
 
@@ -313,12 +309,11 @@ module Numeron
         list << validation(i, attack[2], attack[0])
         list << validation(i, attack[2], attack[1])
       end
-
-      list.compact!
       update_possibilities(list)
     end
 
     def update_possibilities(possibilities)
+      possibilities.compact!
       @possibilities = @possibilities.nil? ? possibilities : possibilities & @possibilities
     end
   end
