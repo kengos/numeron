@@ -34,7 +34,7 @@ describe Numeron::Analyzer do
   # end
 
   describe "validation" do
-    let(:calc) { Numeron::Calculator.new.tap{|f| f.input('123', 0, 1) ; f.input('245', 2, 0) } }
+    let(:calc) { Numeron::Calculator.new.tap{|f| f.input('123', 0, 1) } }
     it do
       result = analyzer.run_possibilities
       result[:recommend].size.tapp

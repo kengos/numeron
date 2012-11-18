@@ -67,7 +67,7 @@ module Numeron
       if @calc.possibilities.size > 2
         result = {recommend: 0}
         if @calc.possibilities.size > 64
-          result = analyzer.run_worstcase_mode
+          result = analyzer.run_average_mode
         elsif @calc.possibilities.size > 21
           result = analyzer.run_possibilities
         else
