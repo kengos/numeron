@@ -85,6 +85,15 @@ describe Numeron::Calculator do
       calc.possibilities.should == ['321']
     end
 
+    it "0e1b, 0e1b 0e0b 1e0b 1e2b" do
+      calc.input('123', 0, 1)
+      calc.input('210', 0, 1)
+      calc.input('340', 0, 0)
+      calc.input('562', 1, 0)
+      calc.input('892', 1, 2)
+      calc.possibilities.should == %w(982)
+    end
+
     it "3eat is 571" do
       calc.input('123', 0, 1)
       calc.input('245', 0, 1)
@@ -121,7 +130,7 @@ describe Numeron::Calculator do
     it "0e1b, 2e0b" do
       calc.input('123', 0, 1)
       calc.input('245', 2, 0)
-      calc.possibilities.tapp #should have(96).items
+      calc.possibilities.should have(11).items
     end
   end
 end

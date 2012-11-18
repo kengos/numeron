@@ -7,7 +7,19 @@ describe Numeron::Analyzer do
   describe '0e1b' do
     let(:calc) { Numeron::Calculator.new.tap{|f| f.input('123', 0, 1) } }
     it do
-      p analyzer.run
+      result = analyzer.run
+      result[:size].tapp
+      result[:recommend].first.tapp
     end
+    # it do
+    #   result = analyzer.calc_expected_value('567')
+    #   p result
+    # end
+    # it do
+    #   result = analyzer.calc_expected_value('210')
+    #   p result
+    # end
+    # it do
+    # end
   end
 end
