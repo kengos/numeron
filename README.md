@@ -1,6 +1,11 @@
 # Numeron
 
-ヌメロンの解の探索プログラム (Ruby版)
+ヌメロンの解の探索プログラム (Ruby版, 3桁Only)
+
+1. 解として可能性のある数値を自動計算
+2. Shuffle可能
+3. 次に出すべき1手を計算してくれるAnalyzer
+4. シミュレーター付き(要実装)
 
 Androidアプリ ... https://play.google.com/store/apps/details?id=com.jpn.gemstone.numer0n.android
 
