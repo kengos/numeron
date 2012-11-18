@@ -75,7 +75,7 @@ module Numeron
 
     def finish
       while 1
-        print "finish? [yes|no]"
+        print "\nfinish? [yes|no] "
         f = STDIN.gets.chomp
         if(f == 'yes' || f == 'y')
           exit
