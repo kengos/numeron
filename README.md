@@ -6,27 +6,17 @@ Androidアプリ ... https://play.google.com/store/apps/details?id=com.jpn.gemst
 
 iPhoneアプリ  ... https://itunes.apple.com/jp/app/numer0n-numeron/id512484171?mt=8
 
-## Installation
+## インストール
 
-Add this line to your application's Gemfile:
-
-    gem 'numeron'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+ruby 1.9以上が必要です
 
     $ gem install numeron
 
-## Usage
+## Solverの使い方
 
-```
-irb
-```
+irbで実行します
 
-```
+```ruby
 > require 'numeron'
 true
 > Numeron::Solver.new.run
@@ -40,6 +30,29 @@ Possibilitiy list random: 798 # <= 答えの可能性の一覧からランダム
 
 finish? [yes|no] # <= yes or yで終了, noで続行
 ```
+
+## Simulatorの使い方
+
+コンピューターが何手で解にたどり着くかのシミュレーションをすることができます。
+
+```ruby
+require 'numeron'
+
+simulator = Numeron::Simulator.new
+# 最初にコールする番号
+first_attack = '123'
+# シミュレーションする答えのリスト
+answers = ['403', '256']
+
+result = simulator.run(answers, first_attack) do |calculator|
+  # ここにシミュレーションしたいコードを書く
+  # calculatorはNumeron::Calculatorオブジェクト
+end
+
+p result
+```
+
+詳細は https://github.com/kengos/numeron/blob/master/examples/simulator_example.rb を参照
 
 ## Numeron::Calculator
 
