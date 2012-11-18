@@ -67,12 +67,10 @@ module Numeron
       recommend = []
       min_size = 10000
       cases = [
-        {eat: 0, bite: 0},
         {eat: 0, bite: 1},
         {eat: 0, bite: 2},
         {eat: 1, bite: 0},
-        {eat: 1, bite: 1},
-        {eat: 2, bite: 0}
+        {eat: 1, bite: 1}
       ]
       possibilities.each do |f|
         average = calc_average(f, cases, true)

@@ -77,5 +77,17 @@ module Numeron
         num.times { result << lists.sample }
       end
     end
+
+    def self.calc_statistics(result)
+      sum = 0
+      _result = []
+      result.each do |f|
+        sum += f[:times]
+        _result << f[:times]
+      end
+      _result.sort!
+
+      { max: _result.max, min: _result.min, median: _result[_result.size / 2], average: (sum.to_f / result.size.to_f) }
+    end
   end
 end

@@ -31,6 +31,15 @@ describe Numeron::Simulator do
     it { Numeron::Simulator::build_sample_answers(5).should have(5).items }
   end
 
+  describe '.calc_statistics' do
+    let(:result) {
+      [
+        {times: 4}, {times: 2}, {times: 5}, {times: 4}, {times: 3}
+      ]
+    }
+    it { Numeron::Simulator::calc_statistics(result).should == {max: 5, min: 2, median: 4, average: 3.6} }
+  end
+
   describe '#eat_and_bite' do
     let(:answer) { '987' }
     subject { Numeron::Simulator.new.eat_and_bite(answer, input) }
