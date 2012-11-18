@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.version       = Numeron::VERSION
   gem.authors       = ["kengos"]
   gem.email         = ["kengo@kengos.jp"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{numer0nの解を計算します。}
+  gem.summary       = %q{numer0n solver}
+  gem.homepage      = "https://github.com/kengos/numeron"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

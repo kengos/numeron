@@ -26,7 +26,7 @@ module Numeron
         if @card_size == attack_number.split(//).size
           break
         else
-          puts @card_size.to_s + '桁必要です。'
+          puts 'Required ' + @card_size.to_s + ' digits.'
         end
       end
 
@@ -37,7 +37,7 @@ module Numeron
           if @card_size > eat
             break
           else
-            puts @card_size.to_s + "未満の数値を入力してください。"
+            puts 'Required less than ' + @card_size.to_s + ' digits.'
           end
         end
 
@@ -47,13 +47,13 @@ module Numeron
           if @card_size >= bite
             break
           else
-            print self.card_size.to_s + "以下の数値を入力してください。"
+            print 'Required ' + @card_size.to_s + ' digits or less'
           end
         end
         if eat + bite <= @card_size
           break
         else
-          puts "Eat, Biteの合計が" + @card_size.to_s + "を上回っています。"
+          puts "Error, Eat + Bite > " + @card_size.to_s
         end
       end
 
@@ -61,10 +61,16 @@ module Numeron
     end
 
     def think
-      puts "残り候補: " + @calc.possibilities.size + "件"
-      if @calc.possibilities.size <= 30
-        p @calc
+      puts "... thinking"
+      puts "possibilities: " + @calc.possibilities.size.to_s
+      analyzer = Numeron::Analyzer.new(@calc)
+      result = @calc.possibilities.size <= 64 ? analyzer.run(:possibilities) : analyzer.run(:average)
+      if result[:recommend].size > 0
+        puts "Analyzer Answer: " + result[:recommend].sample.to_s
+      else
+        puts "Calculator Error."
       end
+      puts "Possibilitiy list random: " + @calc.possibilities.sample.to_s
     end
 
     def finish
