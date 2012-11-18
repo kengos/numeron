@@ -52,7 +52,7 @@ module Numeron
         _calculator.input(f, worst_case[:eat], worst_case[:bite])
         if min_size == _calculator.possibilities.size
           recommend << f
-        elsif min_size > _calculator.possibilities.size
+        elsif _calculator.possibilities.size > 0 && min_size > _calculator.possibilities.size
           recommend = [f]
           min_size = _calculator.possibilities.size
         end

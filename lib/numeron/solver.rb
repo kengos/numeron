@@ -64,22 +64,39 @@ module Numeron
       puts "... thinking"
       puts "possibilities: " + @calc.possibilities.size.to_s
       analyzer = Numeron::Analyzer.new(@calc)
-      result = @calc.possibilities.size <= 64 ? analyzer.run(:possibilities) : analyzer.run(:average)
-      if result[:recommend].size > 0
-        puts "Analyzer Answer: " + result[:recommend].sample.to_s
-      else
-        puts "Calculator Error."
+      if @calc.possibilities.size > 2
+        result = {recommend: 0}
+        if @calc.possibilities.size > 64
+          result = analyzer.run_worstcase_mode
+        elsif @calc.possibilities.size > 21
+          result = analyzer.run_possibilities
+        else
+          cases = [
+            {eat: 0, bite: 0},
+            {eat: 0, bite: 1},
+            {eat: 0, bite: 2},
+            {eat: 1, bite: 0},
+            {eat: 1, bite: 1},
+            {eat: 2, bite: 0}
+          ]
+          result = analyzer.run_average_mode(cases)
+        end
+        if result[:recommend].size > 0
+          puts "Analyzer Answer: " + result[:recommend].sample.to_s
+        else
+          puts "Calculator Error."
+        end
       end
       puts "Possibilitiy list random: " + @calc.possibilities.sample.to_s
     end
 
     def finish
       while 1
-        print "\nfinish? [yes|no] "
+        print "\nfinish? [yes] "
         f = STDIN.gets.chomp
         if(f == 'yes' || f == 'y')
           exit
-        elsif f == 'no' || f == 'n'
+        else
           break
         end
       end
