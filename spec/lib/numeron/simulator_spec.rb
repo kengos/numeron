@@ -27,6 +27,10 @@ describe Numeron::Simulator do
     end
   end
 
+  describe '.build_sample_answers' do
+    it { Numeron::Simulator::build_sample_answers(5).should have(5).items }
+  end
+
   describe '#eat_and_bite' do
     let(:answer) { '987' }
     subject { Numeron::Simulator.new.eat_and_bite(answer, input) }

@@ -60,5 +60,22 @@ module Numeron
         }
       end
     end
+
+    def self.build_sample_answers(num = 10)
+      lists = []
+      (0..9).to_a.each do |i|
+        (0..9).to_a.each do |j|
+          next if i == j
+          (0..9).to_a.each do |k|
+            next if i == k || j == k
+            lists << i.to_s + j.to_s + k.to_s
+          end
+        end
+      end
+
+      [].tap do |result|
+        num.times { result << lists.sample }
+      end
+    end
   end
 end
