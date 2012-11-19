@@ -2,18 +2,50 @@
 
 module Numeron
   class Solver
-    attr_accessor :calc, :card_size
+    attr_accessor :calc, :card_size, :used_items
     def initialize
       @calc = Numeron::Calculator.new
       @card_size = 3
+      @used_items = {slash: false, shuffle: false}
     end
 
     def run
       while 1
+        item
         next unless question
         think
         finish
       end
+    end
+
+    # アイテムの使用
+    def item
+      shuffle unless @used_items[:shuffle]
+      slash unless @used_items[:slash]
+    end
+
+    def slash
+      print "\nUsing slash? [yes]"
+      f = STDIN.gets.chomp
+      return if f != 'yes' && f != 'y'
+      while 1
+        print "Input slash number: "
+        f =STDIN.gets.chomp.to_i
+        break if f >= 2 && f <= 9
+        puts "Invalid slash number."
+      end
+      @calc.slash(f)
+      @used_items[:slash] = true
+      think
+    end
+
+    def shuffle
+      print "\nUsing shuffle? [yes]"
+      f = STDIN.gets.chomp
+      return if f != 'yes' && f != 'y'
+      @calc.shuffle
+      @used_items[:shuffle] = true
+      think
     end
 
     def question

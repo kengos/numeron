@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.version       = Numeron::VERSION
   gem.authors       = ["kengos"]
   gem.email         = ["kengo@kengos.jp"]
-  gem.description   = %q{numer0nの解を計算します。(Shuffle対応,シミュレーター付き,Analyzer未完成)}
+  gem.description   = %q{numer0nの解を計算します。(Shuffle, Slash対応, シミュレーター付き, Analyzer未完成)}
   gem.summary       = %q{numer0n solver}
   gem.homepage      = "https://github.com/kengos/numeron"
 
