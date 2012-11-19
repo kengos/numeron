@@ -78,6 +78,50 @@ describe Numeron::Calculator do
     end
   end
 
+  describe '#slash' do
+    # slashを使った場合は、解の可能性は 6 * (10 - n) * (n - 1)に絞られる
+    # 正しくは、 s! * (10 - n) * (n - s + 2) (sはカードの枚数、 nはslash number, s!はsの階乗)
+    it 'slash 2' do
+      calc.slash(2)
+      calc.possibilities.should have(48).items
+    end
+
+    it 'slash 3' do
+      calc.slash(3)
+      calc.possibilities.should have(84).items
+    end
+
+    it 'slash 4' do
+      calc.slash(4)
+      calc.possibilities.should have(108).items
+    end
+
+    it 'slash 5' do
+      calc.slash(5)
+      calc.possibilities.should have(120).items
+    end
+
+    it 'slash 6' do
+      calc.slash(6)
+      calc.possibilities.should have(120).items
+    end
+
+    it 'slash 7' do
+      calc.slash(7)
+      calc.possibilities.should have(108).items
+    end
+
+    it 'slash 8' do
+      calc.slash(8)
+      calc.possibilities.should have(84).items
+    end
+
+    it 'slash 9' do
+      calc.slash(9)
+      calc.possibilities.should have(48).items
+    end
+  end
+
   describe "scenario" do
     it "1e0b, 1e2b" do
       calc.input('348', 1, 0)

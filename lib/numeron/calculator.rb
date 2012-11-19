@@ -10,6 +10,8 @@ module Numeron
     attr_accessor :mays
     # 解の桁数(未実装)
     attr_accessor :answer_size
+    # Slash Number
+    attr_accessor :slash_number
 
     def initialize(answer_size = 3)
       @histories = []
@@ -344,6 +346,28 @@ module Numeron
         list << validation(i, attack[2], attack[0])
         list << validation(i, attack[2], attack[1])
       end
+      update_possibilities(list)
+    end
+
+    def slash(slash_number)
+      @slash_number = slash_number
+
+      # 9
+      # [0, 9]
+      list = []
+      slash_number.upto(9){|i|
+        min = i - slash_number
+        from = min + 1
+        to = i - 1
+        (from..to).to_a.each do |f|
+          list << validation(i, min, f)
+          list << validation(min, i, f)
+          list << validation(i, f, min)
+          list << validation(min, f, i)
+          list << validation(f, min, i)
+          list << validation(f, i, min)
+        end
+      }
       update_possibilities(list)
     end
 
