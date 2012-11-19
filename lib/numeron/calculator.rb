@@ -2,18 +2,36 @@
 
 module Numeron
   class Calculator
-    attr_accessor :histories, :possibilities, :mays
+    # コール履歴
+    attr_accessor :histories
+    # 解として可能性があるデータリスト
+    attr_accessor :possibilities
+    # 各桁における解の可能性として考えられる数値
+    attr_accessor :mays
+    # 解の桁数(未実装)
+    attr_accessor :answer_size
 
-    def initialize(card_size = 3)
+    def initialize(answer_size = 3)
       @histories = []
-      @mays = [(0..9).to_a, (0..9).to_a, (0..9).to_a]
       @possibilities = nil
+      @mays = [(0..9).to_a, (0..9).to_a, (0..9).to_a]
+      @answer_size = answer_size
     end
 
+    # コールした数値とその結果を設定
+    # @param [String] attack コールした数値
+    # @param [Integer] eat Eatの数
+    # @param [Integer] bite Biteの数
+    # @return [Boolean] 
     def input(attack, eat, bite)
       attack = attack.split(//).map(&:to_i)
       eat = eat.to_i
       bite = bite.to_i
+
+      if attack.size != @answer_size || eat > @answer_size || bite > @answer_size && eat + bite > @answer_size
+        raise ArgumentError, 'Invalid argument. '
+      end
+
       @histories << {attack: attack, eat: eat, bite: bite}
 
       if eat == 0 && bite == 0
@@ -32,12 +50,15 @@ module Numeron
         one_eat_zero_bite(attack)
       elsif eat == 2 && bite == 0
         two_eat_zero_bite(attack)
+      elsif eat == 3 && bite == 0
+        @possibilities = []
       else
         return false
       end
       return true
     end
 
+    # 0 Eat 0 Bite の時の可能性計算
     def zero_eat_zero_bite(attack)
       @mays[0] = @mays[0] - attack
       @mays[1] = @mays[1] - attack
@@ -56,6 +77,7 @@ module Numeron
       update_possibilities(list)
     end
 
+    # 0 Eat 1 Bite の時の可能性計算
     def zero_eat_one_bite(attack)
       # 各桁のeatの可能性がなくなる
       @mays[0] = @mays[0] - [attack[0]]
@@ -89,6 +111,7 @@ module Numeron
       update_possibilities(list)
     end
 
+    # 0 Eat 2 Bite の時の可能性計算
     def zero_eat_two_bite(attack)
       @mays[0] = @mays[0] - [attack[0]]
       @mays[1] = @mays[1] - [attack[1]]
@@ -118,6 +141,7 @@ module Numeron
       update_possibilities(list)
     end
 
+    # 0 Eat 3 Bite の時の可能性計算
     def zero_eat_three_bite(attack)
       # 各桁の可能性が2つに絞られる
       @mays[0] = @mays[0] & [attack[1], attack[2]]
@@ -130,6 +154,7 @@ module Numeron
       update_possibilities(list)
     end
 
+    # 1 Eat 0 Bite の時の可能性計算
     def one_eat_zero_bite(attack)
       list = []
       # 先頭eat
@@ -158,6 +183,7 @@ module Numeron
       update_possibilities(list)
     end
 
+    # 1 Eat 1 Bite の時の可能性計算
     def one_eat_one_bite(attack)
       list = []
       (@mays[2] - attack).each do |f|
@@ -183,6 +209,7 @@ module Numeron
       update_possibilities(list)
     end
 
+    # 1 Eat 2 Bite の時の可能性計算
     def one_eat_two_bite(attack)
       # attack以外の可能性がなくなるので、積
       @mays[0] = @mays[0] & attack
@@ -196,6 +223,7 @@ module Numeron
       update_possibilities(list)
     end
 
+    # 2 Eat 0 Bite の時の可能性計算
     def two_eat_zero_bite(attack)
       # 先頭2つがeat
       list = []
@@ -213,6 +241,9 @@ module Numeron
       update_possibilities(list)
     end
 
+    # 各桁が可能性としてありえるかのチェック
+    # @maysに含まれていること、重複がなければ正常と判定する
+    # @return [String, nil] 正常な場合はString, 異常値の場合は nil
     def validation(i, j, k)
       return nil if i == j || i == k || j == k
       if @mays[0].include?(i) && @mays[1].include?(j) && @mays[2].include?(k)
@@ -248,6 +279,8 @@ module Numeron
       end
     end
 
+    # シャッフル時の再計算
+    # 1 Eat 0 Bite または 0 Eat 1 Biteの場合
     def one_eat_or_one_bite(attack)
       list = []
       # attack[0] - attack[3]が一桁目に含まれている
@@ -278,6 +311,8 @@ module Numeron
       update_possibilities(list)
     end
 
+    # シャッフル時の再計算
+    # 2 eat 0 Bite, or 1 Eat 1 Bite or 0 Eat 0 Biteの場合
     def two_eat_or_two_bite(attack)
       list = []
       # 末尾が不明
@@ -312,6 +347,9 @@ module Numeron
       update_possibilities(list)
     end
 
+    # 可能性リストの更新
+    # 現在設定されている可能性リストと引数で渡された可能性リストの論理積をとる
+    # @param [Array] possibilities 可能性としてありえる数値リスト
     def update_possibilities(possibilities)
       possibilities.compact!
       @possibilities = @possibilities.nil? ? possibilities : possibilities & @possibilities
