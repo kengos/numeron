@@ -21,10 +21,20 @@ ruby 1.9以上が必要です
 
 irbで実行します
 
+※現在shuffleのロジックがおかしいです。(slash numberの反映等がうまくいっていない)
+
 ```ruby
 > require 'numeron'
 true
 > Numeron::Solver.new.run
+Using shuffle? [yes] # <= 相手がshuffleを使ったかどうか聞いてきます。 y or yesでshuffleします
+
+Using slash? [yes]y # <= slashを使うか聞いてきます。y or yesで slash numberをいれることができます
+Input slash number: 2 # <= slash numberをいれます
+... thinking
+possibilities: 48
+Analyzer Answer: 789
+Possibilitiy list random: 345
 Attack number: 123 # <= callした数値を入力
 Eat number: 0 # <= callした結果 eatの数を入力
 Bite number: 0 # <= callした結果 biteの数を入力
