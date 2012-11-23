@@ -3,13 +3,9 @@
 ヌメロンの解の探索プログラム (Ruby版, 3桁Only)
 
 1. 解として可能性のある数値を自動計算
-2. Shuffle可能
+2. ダブル(されたあとの開放されたカード番号指定), ターゲット, チェンジ, ハイアンドロー, スラッシュ, シャッフルに対応
 3. 次に出すべき1手を計算してくれるAnalyzer
 4. シミュレーター付き(要実装)
-
-Androidアプリ ... https://play.google.com/store/apps/details?id=com.jpn.gemstone.numer0n.android
-
-iPhoneアプリ  ... https://itunes.apple.com/jp/app/numer0n-numeron/id512484171?mt=8
 
 ## インストール
 
@@ -21,29 +17,96 @@ ruby 1.9以上が必要です
 
 irbで実行します
 
-※現在shuffleのロジックがおかしいです。(slash numberの反映等がうまくいっていない)
-
 ```ruby
 > require 'numeron'
 true
 > Numeron::Solver.new.run
-Using shuffle? [yes] # <= 相手がshuffleを使ったかどうか聞いてきます。 y or yesでshuffleします
+action (item|question|think|finish|help): 
+```
 
-Using slash? [yes]y # <= slashを使うか聞いてきます。y or yesで slash numberをいれることができます
-Input slash number: 2 # <= slash numberをいれます
-... thinking
-possibilities: 48
-Analyzer Answer: 789
-Possibilitiy list random: 345
+### actionの説明
+
+```
+item ... アイテムを使う、使われた場合はこれを入力。0 または i をいれてもアイテム利用コンソールが起動する
+question ... 相手に対して、3桁の数値をコールする。
+think ... 答えを計算します。
+finish ... 終了
+```
+
+### itemの説明
+
+ダブルから順番に使用するアイテムを聞かれますので、使用する箇所でyes or yを入力します。
+
+```
+Using double ? [yes]: 
+Using shuffle ? [yes]: 
+Using change ? [yes]: 
+Using target ? [yes]: 
+Using high_and_low ? [yes]: 
+Using slash ? [yes]:
+```
+
+#### double
+
+```
+Input open number: # <= 相手が開けた数値を入力します。(0 から 9)
+Input open position [0, 1, 2]: # <= 開けた数値の位置を入力します。(0が一番左側)
+```
+
+#### shuffle
+
+特に入力は求められません
+
+#### change
+
+```
+Input change position: # <= 相手がチェンジした位置を入力します。(0が一番左側)
+Input high or low: # <= チェンジした数値がhigh なのか low なのかを入力します
+```
+
+#### target
+
+```
+Input open number: # <= ターゲットで指定した番号を入力します。(0から9)
+Input open position.
+If the enemy does not open card position, don't put anything
+Input [0, 1, 2, or empty]: # <= その番号が存在した場合はその位置を入力します(0が一番左側), 存在しなかった場合は何も入力しません。
+```
+
+#### high_and_low
+
+```
+position 0 is high? [yes|no]: # <= 左側がhighの場合は yes or y, lowの場合はno or nを入力
+position 1 is high? [yes|no]: # <= 真ん中がhighの場合は yes or y, lowの場合はno or nを入力
+position 2 is high? [yes|no]: # <= 右側がhighの場合は yes or y, lowの場合はno or nを入力
+```
+
+#### slash
+
+```
+Input slash number: # <= slashナンバーを入力
+```
+
+### questionの説明
+
+コールした数値とその解答を入力するメイン部分です。
+
+```
 Attack number: 123 # <= callした数値を入力
 Eat number: 0 # <= callした結果 eatの数を入力
 Bite number: 0 # <= callした結果 biteの数を入力
-... thinking
-possibilities: 210 # <= 計算した結果、答えとして可能性がある数値の個数
-Analyzer Answer: 372 # <= Analyzerがおすすめの答えとして選んだ数
-Possibilitiy list random: 798 # <= 答えの可能性の一覧からランダムで選んだ数
+```
 
-finish? [yes|no] # <= yes or yで終了, noで続行
+### thinkの説明
+
+PCが計算した答えを表示してくれます。
+結構適当です。
+
+```
+... thinking
+possibilities: 48 # <= 答えの可能性として考えられる個数
+Analyzer Answer: 789 # <= アナライザーが出した答え
+Possibilitiy list random: 345 # <= 答えの候補からランダムで取り出した数値
 ```
 
 ## Simulatorの使い方
