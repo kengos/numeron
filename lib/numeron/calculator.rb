@@ -61,6 +61,76 @@ module Numeron
       return true
     end
 
+
+    # シャッフル
+    def shuffle
+      @mays[0] = @mays[0] | @mays[1] | @mays[2]
+      @mays[1] = @mays[0] | @mays[1] | @mays[2]
+      @mays[2] = @mays[0] | @mays[1] | @mays[2]
+      list = []
+      @mays[0].each do |i|
+        @mays[1].each do |j|
+          next if i == j
+          @mays[2].each do |k|
+            next if i == k || j == k
+            list << validation(i, j, k)
+          end
+        end
+      end
+      @possibilities = list.compact
+      @histories.each do |history|
+        eat_and_bite = history[:eat] + history[:bite]
+        if eat_and_bite == 1
+          one_eat_or_one_bite(history[:attack])
+        elsif eat_and_bite == 2
+          two_eat_or_two_bite(history[:attack])
+        end
+      end
+      calc_slash
+    end
+
+
+    def slash(slash_number)
+      @slash_number = slash_number
+      calc_slash
+    end
+
+    # チェンジ
+    # チェンジする桁数の指定とその数値がhigh or lowどちらなのかを宣言する
+    # @param [Integer] position チェンジを実行した位置。 0 - 2の範囲
+    # @param [Boolean] is_high チェンジしたカードがhighかどうか
+    def change(position, is_high)
+      raise ArgumentError, 'Invalid argument. position is 0 to 3' if position < 0 && position > 2
+
+      possibilities = is_high ? [5, 6, 7, 8, 9] : [0, 1, 2, 3, 4]
+      @mays.each_with_index do |may, i|
+        possibilities -= may if may.size == 1
+        if i != position
+          tmp = may.select {|f| is_high ? f > 4 : f <= 4 }
+          next if tmp.size != 1
+          @mays[i] -= tmp
+        end
+      end
+      # 3種類に絞りこまれていたら、残りの種類であることが確定
+      x = (@mays[0] + @mays[1] + @mays[2]).uniq
+      possibilities -= x if x.size == 3
+      @mays[position] = possibilities
+
+      # 可能性の再計算
+      list = []
+      @mays[0].each do |i|
+        @mays[1].each do |j|
+          next if i == j
+          @mays[2].each do |k|
+            next if i == k || j == k
+            list << validation(i, j, k)
+          end
+        end
+      end
+      @possibilities = list
+    end
+
+  protected
     # 0 Eat 0 Bite の時の可能性計算
     def zero_eat_zero_bite(attack)
       @mays[0] = @mays[0] - attack
@@ -256,33 +326,6 @@ module Numeron
       end
     end
 
-    # シャッフル
-    def shuffle
-      @mays[0] = @mays[0] | @mays[1] | @mays[2]
-      @mays[1] = @mays[0] | @mays[1] | @mays[2]
-      @mays[2] = @mays[0] | @mays[1] | @mays[2]
-      list = []
-      @mays[0].each do |i|
-        @mays[1].each do |j|
-          next if i == j
-          @mays[2].each do |k|
-            next if i == k || j == k
-            list << validation(i, j, k)
-          end
-        end
-      end
-      @possibilities = list.compact
-      @histories.each do |history|
-        eat_and_bite = history[:eat] + history[:bite]
-        if eat_and_bite == 1
-          one_eat_or_one_bite(history[:attack])
-        elsif eat_and_bite == 2
-          two_eat_or_two_bite(history[:attack])
-        end
-      end
-      calc_slash
-    end
-
     # シャッフル時の再計算
     # 1 Eat 0 Bite または 0 Eat 1 Biteの場合
     def one_eat_or_one_bite(attack)
@@ -351,12 +394,6 @@ module Numeron
       update_possibilities(list)
     end
 
-    def slash(slash_number)
-      @slash_number = slash_number
-      calc_slash
-    end
-
-  private
     def calc_slash
       return if @slash_number.nil?
       list = []

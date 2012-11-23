@@ -141,6 +141,54 @@ describe Numeron::Calculator do
     end
   end
 
+  describe '#change' do
+    it '0, true' do
+      calc.change(0, true)
+      calc.mays[0].should == (5..9).to_a
+    end
+
+    it '1, false' do
+      calc.change(1, false)
+      calc.mays[1].should == (0..4).to_a
+    end
+
+    it '0e3b, 0, false' do
+      calc.input('234', 0, 3) # answer 342
+      calc.change(0, false) # answer 142
+      calc.mays[0].should == [0, 1]
+      calc.possibilities.should =~ %w(023 042 043 123 142 143)
+    end
+
+    it '345 0e3b, 0, false, shuffle' do
+      calc.input('345', 0, 3) # answer 453
+      calc.change(0, false) # 253
+      calc.mays[0].should == [0, 1, 2]
+      calc.mays[1].should == [5]
+      calc.mays[2].should == [3, 4]
+      calc.possibilities.should =~ %w(054 053 153 154 253 254)
+      calc.shuffle
+      # todo
+    end
+
+    it '456 0e3b, 0, false' do
+      calc.input('456', 0, 3) # answer 564
+      calc.change(2, false)
+      calc.mays[0].should == [5, 6]
+      calc.mays[1].should == [6]
+      calc.mays[2].should == [0, 1, 2, 3]
+      calc.possibilities.should =~ %w(560 561 562 563)
+    end
+
+    it '1e2b, 0, false' do
+      calc.input('123', 1, 2) # 132
+      calc.change(0, false) # 432
+      calc.mays[0].should == [0, 4]
+      calc.mays[1].should == [1, 2, 3]
+      calc.mays[2].should == [1, 2, 3]
+      calc.possibilities.should =~ %w(012 013 021 023 031 032 412 413 421 423 431 432)
+    end
+  end
+
   describe "scenario" do
     it "1e0b, 1e2b" do
       calc.input('348', 1, 0)
