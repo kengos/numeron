@@ -77,6 +77,17 @@ describe Numeron::Calculator do
       calc.possibilities.should have(378).items
     end
 
+    it "mays[0] is 3 and shuffle" do
+      calc.mays[0] = [3]
+      calc.shuffle
+      # 3が利用されているのは確定
+      calc.mays[0].should =~ (0..9).to_a
+      calc.mays[1].should =~ (0..9).to_a
+      calc.mays[2].should =~ (0..9).to_a
+
+      calc.possibilities.should have(216).items
+    end
+
     context 'using slash' do
       it 'slash 2' do
         calc.slash(2)
@@ -167,7 +178,11 @@ describe Numeron::Calculator do
       calc.mays[2].should == [3, 4]
       calc.possibilities.should =~ %w(054 053 153 154 253 254)
       calc.shuffle
-      # todo
+      calc.mays[0].should =~ [0, 1, 2, 3, 4, 5]
+      calc.mays[1].should =~ [0, 1, 2, 3, 4, 5]
+      calc.mays[2].should =~ [0, 1, 2, 3, 4, 5]
+      # 5確定なので、 3 * 5 * 4 = 60 (5の位置3箇所) * (5を除く可能性数) * (5を除く可能性数 - 1つ前の数値)
+      calc.possibilities.should have(60).items
     end
 
     it '456 0e3b, 0, false' do

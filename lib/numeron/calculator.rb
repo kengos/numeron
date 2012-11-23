@@ -64,20 +64,33 @@ module Numeron
 
     # シャッフル
     def shuffle
+      # 使用確定数字を計算(候補数が1つの場合)
+      fixed = @mays.select{|f| f.size == 1}.flatten
+
       @mays[0] = @mays[0] | @mays[1] | @mays[2]
       @mays[1] = @mays[0] | @mays[1] | @mays[2]
       @mays[2] = @mays[0] | @mays[1] | @mays[2]
+
       list = []
       @mays[0].each do |i|
         @mays[1].each do |j|
           next if i == j
           @mays[2].each do |k|
             next if i == k || j == k
-            list << validation(i, j, k)
+            if fixed.size == 0
+              list << validation(i, j, k)
+            else
+              fixed.each do |f| # ちょっと計算量がおおいか。。。
+                list << validation(f, j, k)
+                list << validation(i, f, k)
+                list << validation(i, j, f)
+              end
+            end
           end
         end
       end
-      @possibilities = list.compact
+
+      @possibilities = list.compact.uniq
       @histories.each do |history|
         eat_and_bite = history[:eat] + history[:bite]
         if eat_and_bite == 1
