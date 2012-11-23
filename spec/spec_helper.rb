@@ -3,7 +3,6 @@ begin
 rescue Exception
 end
 
-require 'rspec'
 require File.expand_path(File.dirname(__FILE__) + '/../lib/numeron')
 
 RSpec.configure do |config|
