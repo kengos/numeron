@@ -18,6 +18,7 @@ module Numeron
       @possibilities = nil
       @mays = [(0..9).to_a, (0..9).to_a, (0..9).to_a]
       @answer_size = answer_size
+      @slash_number = nil
     end
 
     # コールした数値とその結果を設定
@@ -279,6 +280,7 @@ module Numeron
           two_eat_or_two_bite(history[:attack])
         end
       end
+      calc_slash
     end
 
     # シャッフル時の再計算
@@ -351,11 +353,14 @@ module Numeron
 
     def slash(slash_number)
       @slash_number = slash_number
+      calc_slash
+    end
 
-      # 9
-      # [0, 9]
+  private
+    def calc_slash
+      return if @slash_number.nil?
       list = []
-      slash_number.upto(9){|i|
+      @slash_number.upto(9){|i|
         min = i - slash_number
         from = min + 1
         to = i - 1

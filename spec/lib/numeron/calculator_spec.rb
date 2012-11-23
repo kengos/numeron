@@ -76,6 +76,25 @@ describe Numeron::Calculator do
       calc.shuffle
       calc.possibilities.should have(378).items
     end
+
+    context 'using slash' do
+      it 'slash 2' do
+        calc.slash(2)
+        calc.possibilities.should have(48).items
+        calc.shuffle
+        calc.possibilities.should have(48).items
+      end
+
+      it '1e1b, slash 2, shuffle' do
+        calc.input('123', 1, 1)
+        calc.possibilities.should have(42).items
+        calc.slash(2)
+        calc.possibilities.should =~ %w(021 102 243 324)
+        calc.shuffle
+        # 数字の組み合わせは 012 or 234のみなので、 (3 * 2 * 1) * 2 = 12パターン
+        calc.possibilities.should =~ %W(021 012 201 210 102 120 243 234 342 324 432 423)
+      end
+    end
   end
 
   describe '#slash' do
