@@ -48,6 +48,80 @@ module Numeron
       end
     end
 
+    def question
+      attack_number = nil
+      eat = 0
+      bite = 0
+      while 1
+        print "Attack number: "
+        attack_number = STDIN.gets.chomp
+        if @card_size == attack_number.split(//).size
+          break
+        else
+          puts 'Required ' + @card_size.to_s + ' digits.'
+        end
+      end
+
+      while 1
+        while 1
+          print "Eat number: "
+          eat = STDIN.gets.chomp.to_i
+          if @card_size > eat
+            break
+          else
+            puts 'Required less than ' + @card_size.to_s + ' digits.'
+          end
+        end
+
+        while 1
+          print "Bite number: "
+          bite = STDIN.gets.chomp.to_i
+          if @card_size >= bite
+            break
+          else
+            print 'Required ' + @card_size.to_s + ' digits or less'
+          end
+        end
+        if eat + bite <= @card_size
+          break
+        else
+          puts "Error, Eat + Bite > " + @card_size.to_s
+        end
+      end
+
+      @calc.input(attack_number, eat, bite)
+    end
+
+    def think
+      puts "... thinking"
+      puts "possibilities: " + @calc.possibilities.size.to_s
+      analyzer = Numeron::Analyzer.new(@calc)
+      if @calc.possibilities.size > 2
+        result = {recommend: 0}
+        if @calc.possibilities.size > 64
+          result = analyzer.run_average_mode
+        elsif @calc.possibilities.size > 21
+          result = analyzer.run_possibilities
+        else
+          cases = [
+            {eat: 0, bite: 0},
+            {eat: 0, bite: 1},
+            {eat: 0, bite: 2},
+            {eat: 1, bite: 0},
+            {eat: 1, bite: 1},
+            {eat: 2, bite: 0}
+          ]
+          result = analyzer.run_average_mode(cases)
+        end
+        if result[:recommend].size > 0
+          puts "Analyzer Answer: " + result[:recommend].sample.to_s
+        else
+          puts "Calculator Error."
+        end
+      end
+      puts "Possibilitiy list random: " + @calc.possibilities.sample.to_s
+    end
+
     def double
       position = nil
       number = nil
@@ -161,80 +235,6 @@ module Numeron
 
     def shuffle
       @calc.shuffle
-    end
-
-    def question
-      attack_number = nil
-      eat = 0
-      bite = 0
-      while 1
-        print "Attack number: "
-        attack_number = STDIN.gets.chomp
-        if @card_size == attack_number.split(//).size
-          break
-        else
-          puts 'Required ' + @card_size.to_s + ' digits.'
-        end
-      end
-
-      while 1
-        while 1
-          print "Eat number: "
-          eat = STDIN.gets.chomp.to_i
-          if @card_size > eat
-            break
-          else
-            puts 'Required less than ' + @card_size.to_s + ' digits.'
-          end
-        end
-
-        while 1
-          print "Bite number: "
-          bite = STDIN.gets.chomp.to_i
-          if @card_size >= bite
-            break
-          else
-            print 'Required ' + @card_size.to_s + ' digits or less'
-          end
-        end
-        if eat + bite <= @card_size
-          break
-        else
-          puts "Error, Eat + Bite > " + @card_size.to_s
-        end
-      end
-
-      @calc.input(attack_number, eat, bite)
-    end
-
-    def think
-      puts "... thinking"
-      puts "possibilities: " + @calc.possibilities.size.to_s
-      analyzer = Numeron::Analyzer.new(@calc)
-      if @calc.possibilities.size > 2
-        result = {recommend: 0}
-        if @calc.possibilities.size > 64
-          result = analyzer.run_average_mode
-        elsif @calc.possibilities.size > 21
-          result = analyzer.run_possibilities
-        else
-          cases = [
-            {eat: 0, bite: 0},
-            {eat: 0, bite: 1},
-            {eat: 0, bite: 2},
-            {eat: 1, bite: 0},
-            {eat: 1, bite: 1},
-            {eat: 2, bite: 0}
-          ]
-          result = analyzer.run_average_mode(cases)
-        end
-        if result[:recommend].size > 0
-          puts "Analyzer Answer: " + result[:recommend].sample.to_s
-        else
-          puts "Calculator Error."
-        end
-      end
-      puts "Possibilitiy list random: " + @calc.possibilities.sample.to_s
     end
   end
 end
