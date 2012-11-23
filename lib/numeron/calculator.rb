@@ -136,12 +136,8 @@ module Numeron
 
     # ダブル
     # 相手がダブルを使用し、カードの数値を公開した場合
-    def double(position, number)
-      raise ArgumentError, 'Invalid argument. position is 0 to 3' if position < 0 && position > 2
-      raise ArgumentError, 'Invalid argument. number is 0 to 9' if number < 0 && position > 9
-
-      @mays[position] = number
-      update_possibilities(recalculate)
+    def double(number, position)
+      target(number, position)
     end
 
     # ハイ&ロー

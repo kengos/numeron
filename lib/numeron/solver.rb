@@ -6,28 +6,150 @@ module Numeron
     def initialize
       @calc = Numeron::Calculator.new
       @card_size = 3
-      @used_items = {slash: false, shuffle: false}
+      @used_items = {double: false, shuffle: false, change: false, target: false, high_and_low: false, slash: false}
     end
 
     def run
       while 1
-        item
-        next unless question
-        think
-        finish
+        print "action (item|question|think|finish|help): "
+        input = STDIN.gets.chomp.downcase
+        if %w(0 i item).include?(input)
+          item
+        elsif %w(1 q question).include?(input)
+          question
+        elsif %w(2 t think).include?(input)
+          think
+        elsif %w(3 f finish).include?(input)
+          break
+        else
+          help
+        end
       end
+    end
+
+    def help
+      puts "----- help messege -----"
+      puts "item ... using item, shortcut 0 or i"
+      puts "question ... call 3 digits numbers, shortcut 1 or q"
+      puts "think ... thinking answer, shortcut 2 or t"
+      puts "finish ... exit this console, shortcut 3 or f"
     end
 
     # アイテムの使用
     def item
-      shuffle unless @used_items[:shuffle]
-      slash unless @used_items[:slash]
+      @used_items.each do |f|
+        next if f[1] == true
+        print "Using " + f[0].to_s + " ? [yes]: "
+        input = STDIN.gets.chomp.downcase
+        next if input != 'yes' && input != 'y'
+        send(f[0])
+        @used_items[f[0]] = true
+        break
+      end
+    end
+
+    def double
+      position = nil
+      number = nil
+
+      while 1
+        print "Input open number: "
+        f = STDIN.gets.chomp.to_i
+        if f >= 0 && f <= 9
+          number = f
+          break
+        else
+          puts "Input error. Please input 0 to 9 number."
+        end
+      end
+
+      while 1
+        print "Input open position [0, 1, 2]: "
+        f = STDIN.gets.chomp.to_i
+        if f >= 0 && f <= 2
+          position = f
+          break
+        else
+          puts "Input error. Please input 0 or 1 or 2."
+        end
+      end
+
+      @calc.double(number, position)
+    end
+
+    def target
+      position = nil
+      number = nil
+
+      while 1
+        print "Input open number: "
+        f = STDIN.gets.chomp.to_i
+        if f >= 0 && f <= 9
+          number = f
+          break
+        else
+          puts "Input error. Please input 0 to 9 number."
+        end
+      end
+
+      while 1
+        puts "Input open position."
+        puts "If the enemy does not open card position, don't put anything"
+        print "Input [0, 1, 2, or empty]: "
+        f = STDIN.gets.chomp.to_i
+        position = f if f >= 0 && f <= 2
+        break
+      end
+
+      @calc.target(number, position)
+    end
+
+    def change
+      position = nil
+      is_high = nil
+      while 1
+        print "Input change position: "
+        f = STDIN.gets.chomp.to_i
+        if f >= 0 && f <= 2
+          position = f
+          break
+        else
+          puts "Input error. Please input 0 to 2 number."
+        end
+      end
+
+      while 1
+        print "Input high or low: "
+        f = STDIN.gets.chomp.downcase
+        if f == 'high' || f == 'low'
+          is_high = f == 'high'
+          break
+        else
+          puts "Input error. Please input high or low."
+        end
+      end
+
+      @calc.change(position, is_high)
+    end
+
+    def high_and_low
+      result = []
+      3.times do |i|
+        while 1
+          print "position " + i.to_s + " is high? [yes|no]: "
+          input = STDIN.gets.chomp.downcase
+          if ['yes', 'y', 'no', 'n'].include?(input)
+            result[i] = (input == 'yes' || input == 'y')
+            break
+          else
+            puts "Input error. Please input yes or no."
+          end
+        end
+      end
+      @calc.high_and_low(result)
     end
 
     def slash
-      print "\nUsing slash? [yes]"
-      f = STDIN.gets.chomp
-      return if f != 'yes' && f != 'y'
       while 1
         print "Input slash number: "
         f =STDIN.gets.chomp.to_i
@@ -35,17 +157,10 @@ module Numeron
         puts "Invalid slash number."
       end
       @calc.slash(f)
-      @used_items[:slash] = true
-      think
     end
 
     def shuffle
-      print "\nUsing shuffle? [yes]"
-      f = STDIN.gets.chomp
-      return if f != 'yes' && f != 'y'
       @calc.shuffle
-      @used_items[:shuffle] = true
-      think
     end
 
     def question
@@ -120,18 +235,6 @@ module Numeron
         end
       end
       puts "Possibilitiy list random: " + @calc.possibilities.sample.to_s
-    end
-
-    def finish
-      while 1
-        print "\nfinish? [yes] "
-        f = STDIN.gets.chomp
-        if(f == 'yes' || f == 'y')
-          exit
-        else
-          break
-        end
-      end
     end
   end
 end
