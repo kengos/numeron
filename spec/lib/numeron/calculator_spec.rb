@@ -245,6 +245,33 @@ describe Numeron::Calculator do
     end
   end
 
+  describe '#target' do
+    it 'simple' do
+      calc.target(0, 0)
+      calc.mays[0].should =~ [0]
+      calc.mays[1].should =~ (1..9).to_a
+      calc.mays[2].should =~ (1..9).to_a
+      calc.possibilities.should have(72).items
+    end
+
+    it 'target(0, nil)' do
+      calc.target(0)
+      calc.mays[0].should =~ (1..9).to_a
+      calc.mays[1].should =~ (1..9).to_a
+      calc.mays[2].should =~ (1..9).to_a
+      calc.possibilities.should have(504).items
+    end
+
+    it '123(0e3b), target(1, 1)' do
+      calc.input('123', 0, 3)
+      calc.target(1, 1)
+      calc.mays[0].should =~ [3]
+      calc.mays[1].should =~ [1]
+      calc.mays[2].should =~ [2]
+      calc.possibilities.should =~ %w(312)
+    end
+  end
+
   describe "scenario" do
     it "1e0b, 1e2b" do
       calc.input('348', 1, 0)

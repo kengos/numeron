@@ -102,9 +102,10 @@ module Numeron
       calc_slash
     end
 
-
-    def slash(slash_number)
-      @slash_number = slash_number
+    # スラッシュ
+    # @param [Integer] number スラッシュナンバー
+    def slash(number)
+      @slash_number = number
       calc_slash
     end
 
@@ -150,6 +151,20 @@ module Numeron
 
       result.each_with_index do |f, i|
         @mays[i] = @mays[i] & (f ? [5, 6, 7, 8, 9] : [0, 1, 2, 3, 4])
+      end
+      update_possibilities(recalculate)
+    end
+
+    # ターゲット
+    # @param [Integer] number 0 から 9までの数値
+    # @param [Integer] position 指定した番号がヒットだった場合の、桁。ヒットでなければnilを指定
+    def target(number, position = nil)
+      raise ArgumentError, 'Invalid argumet. number is 0 to 9' if number < 0 && number > 9
+      raise ArgumentError, 'Invalid argument. position is nil or 0 to 3' if !position.nil? && position < 0 && position > 2
+      if position.nil?
+        3.times {|i| @mays[i] = @mays[i] - [number]}
+      else
+        @mays[position] = [number]
       end
       update_possibilities(recalculate)
     end
