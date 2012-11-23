@@ -163,14 +163,16 @@ describe Numeron::Calculator do
       calc.mays[1].should == (0..4).to_a
     end
 
-    it '0e3b, 0, false' do
+    it '234(0e3b), change(0, false)' do
       calc.input('234', 0, 3) # answer 342
       calc.change(0, false) # answer 142
-      calc.mays[0].should == [0, 1]
+      calc.mays[0].should =~ [0, 1]
+      calc.mays[1].should =~ [2, 4]
+      calc.mays[2].should =~ [2, 3]
       calc.possibilities.should =~ %w(023 042 043 123 142 143)
     end
 
-    it '345 0e3b, 0, false, shuffle' do
+    it '345(0e3b), change(0, false), shuffle' do
       calc.input('345', 0, 3) # answer 453
       calc.change(0, false) # 253
       calc.mays[0].should == [0, 1, 2]
@@ -185,7 +187,7 @@ describe Numeron::Calculator do
       calc.possibilities.should have(60).items
     end
 
-    it '456 0e3b, 0, false' do
+    it '456(0e3b), change(0, false)' do
       calc.input('456', 0, 3) # answer 564
       calc.change(2, false)
       calc.mays[0].should == [5, 6]

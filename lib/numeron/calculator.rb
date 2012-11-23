@@ -130,37 +130,42 @@ module Numeron
       @mays[position] = possibilities
 
       # 可能性の再計算
-      list = []
-      @mays[0].each do |i|
-        @mays[1].each do |j|
-          next if i == j
-          @mays[2].each do |k|
-            next if i == k || j == k
-            list << validation(i, j, k)
-          end
-        end
-      end
-      @possibilities = list
+      @possibilities = recalculate
+    end
+
+    # ダブル
+    # 相手がダブルを使用し、カードの数値を公開した場合
+    def double(position, number)
+      raise ArgumentError, 'Invalid argument. position is 0 to 3' if position < 0 && position > 2
+      raise ArgumentError, 'Invalid argument. number is 0 to 9' if number < 0 && position > 9
+
+      @mays[position] = number
+      update_possibilities(recalculate)
     end
 
   protected
+
+    # 各桁の可能性を元に再度可能性リストを作り直す
+    def recalculate
+      [].tap do |list|
+        @mays[0].each do |i|
+          @mays[1].each do |j|
+            next if i == j
+            @mays[2].each do |k|
+              next if i == k || j == k
+              list << validation(i, j, k)
+            end
+          end
+        end
+      end.compact.uniq
+    end
+
     # 0 Eat 0 Bite の時の可能性計算
     def zero_eat_zero_bite(attack)
       @mays[0] = @mays[0] - attack
       @mays[1] = @mays[1] - attack
       @mays[2] = @mays[2] - attack
-
-      list = []
-      @mays[0].each do |i|
-        @mays[1].each do |j|
-          next if i == j
-          @mays[2].each do |k|
-            next if i == k || j == k
-            list << validation(i, j, k)
-          end
-        end
-      end
-      update_possibilities(list)
+      update_possibilities(recalculate)
     end
 
     # 0 Eat 1 Bite の時の可能性計算
@@ -174,24 +179,24 @@ module Numeron
       (@mays[0] - attack).each do |i|
         (@mays[1] - attack).each do |j|
           next if i == j
-          list << validation(i, j, attack[0]) if attack[0] != i || attack[0] != j
-          list << validation(i, j, attack[1]) if attack[1] != i || attack[1] != j
+          list << validation(i, j, attack[0])
+          list << validation(i, j, attack[1])
         end
       end
 
       (@mays[0] - attack).each do |i|
         (@mays[2] - attack).each do |k|
           next if i == k
-          list << validation(i, attack[0], k) if attack[0] != i || attack[0] != j
-          list << validation(i, attack[2], k) if attack[1] != i || attack[1] != j
+          list << validation(i, attack[0], k)
+          list << validation(i, attack[2], k)
         end
       end
 
       (@mays[1] - attack).each do |j|
         (@mays[2] - attack).each do |k|
           next if j == k
-          list << validation(attack[1], j, k) if attack[1] != j || attack[1] != k
-          list << validation(attack[2], j, k) if attack[2] != j || attack[2] != k
+          list << validation(attack[1], j, k)
+          list << validation(attack[2], j, k)
         end
       end
       update_possibilities(list)
