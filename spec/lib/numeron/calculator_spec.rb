@@ -190,7 +190,7 @@ describe Numeron::Calculator do
     it '456(0e3b), change(0, false)' do
       calc.input('456', 0, 3) # answer 564
       calc.change(2, false)
-      calc.mays[0].should == [5, 6]
+      calc.mays[0].should == [5]
       calc.mays[1].should == [6]
       calc.mays[2].should == [0, 1, 2, 3]
       calc.possibilities.should =~ %w(560 561 562 563)
@@ -203,6 +203,45 @@ describe Numeron::Calculator do
       calc.mays[1].should == [1, 2, 3]
       calc.mays[2].should == [1, 2, 3]
       calc.possibilities.should =~ %w(012 013 021 023 031 032 412 413 421 423 431 432)
+    end
+  end
+
+  describe '#high_and_low' do
+    it 'simple' do
+      calc.high_and_low([true, false, true])
+      calc.mays[0].should =~ [5, 6, 7, 8, 9]
+      calc.mays[1].should =~ [0, 1, 2, 3, 4]
+      calc.mays[2].should =~ [5, 6, 7, 8, 9]
+      calc.possibilities.should have(100).items
+    end
+
+    it '345(0e3b), high_and_low' do
+      calc.input('345', 0, 3) # 4 5 3
+      calc.high_and_low([false, true, false])
+      calc.mays[0].should =~ [4]
+      calc.mays[1].should =~ [5]
+      calc.mays[2].should =~ [3]
+      calc.possibilities.should == %w(453)
+    end
+
+    it '345(1e2b), high_and_low' do
+      calc.input('354', 1, 2) # 4 5 3
+      calc.high_and_low([false, true, false])
+      calc.mays[0].should =~ [3, 4]
+      calc.mays[1].should =~ [5]
+      calc.mays[2].should =~ [3, 4]
+      calc.possibilities.should == %w(453)
+    end
+
+    it '345(0e1b), high_and_low' do
+      calc.input('354', 0, 1) # 4 6 2
+      calc.high_and_low([false, true, false])
+      calc.mays[0].should =~ [0, 1, 2, 4]
+      calc.mays[1].should =~ [6, 7, 8, 9]
+      calc.mays[2].should =~ [0, 1, 2, 3]
+
+      # [4] * [6, 7, 8, 9] * [0, 1, 2] + [0, 1, 2] * [6, 7, 8, 9] * [3] = 4 * 3 * 2 = 24
+      calc.possibilities.should have(24).items
     end
   end
 

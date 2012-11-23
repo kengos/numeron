@@ -115,9 +115,9 @@ module Numeron
     def change(position, is_high)
       raise ArgumentError, 'Invalid argument. position is 0 to 3' if position < 0 && position > 2
 
-      possibilities = is_high ? [5, 6, 7, 8, 9] : [0, 1, 2, 3, 4]
+      _possibilities = is_high ? [5, 6, 7, 8, 9] : [0, 1, 2, 3, 4]
       @mays.each_with_index do |may, i|
-        possibilities -= may if may.size == 1
+        _possibilities -= may if may.size == 1
         if i != position
           tmp = may.select {|f| is_high ? f > 4 : f <= 4 }
           next if tmp.size != 1
@@ -126,8 +126,8 @@ module Numeron
       end
       # 3種類に絞りこまれていたら、残りの種類であることが確定
       x = (@mays[0] + @mays[1] + @mays[2]).uniq
-      possibilities -= x if x.size == 3
-      @mays[position] = possibilities
+      _possibilities -= x if x.size == 3
+      @mays[position] = _possibilities
 
       # 可能性の再計算
       @possibilities = recalculate
@@ -143,10 +143,22 @@ module Numeron
       update_possibilities(recalculate)
     end
 
+    # ハイ&ロー
+    # @param [Array] result [true, false, true] で high, low, high を示す 
+    def high_and_low(result = [])
+      raise ArgumentError, 'Invalid argument.' if result.size != 3
+
+      result.each_with_index do |f, i|
+        @mays[i] = @mays[i] & (f ? [5, 6, 7, 8, 9] : [0, 1, 2, 3, 4])
+      end
+      update_possibilities(recalculate)
+    end
+
   protected
 
     # 各桁の可能性を元に再度可能性リストを作り直す
     def recalculate
+      reject
       [].tap do |list|
         @mays[0].each do |i|
           @mays[1].each do |j|
@@ -158,6 +170,17 @@ module Numeron
           end
         end
       end.compact.uniq
+    end
+
+    # 確定数値が存在する場合その数値を除外する
+    def reject
+      @mays.each_with_index do |may, i|
+        next if may.size != 1
+        @mays.each_with_index do |f, j|
+          next if i == j
+          @mays[j] = @mays[j] - may
+        end
+      end
     end
 
     # 0 Eat 0 Bite の時の可能性計算
@@ -433,10 +456,10 @@ module Numeron
 
     # 可能性リストの更新
     # 現在設定されている可能性リストと引数で渡された可能性リストの論理積をとる
-    # @param [Array] possibilities 可能性としてありえる数値リスト
-    def update_possibilities(possibilities)
-      possibilities.compact!
-      @possibilities = @possibilities.nil? ? possibilities : possibilities & @possibilities
+    # @param [Array] list 可能性としてありえる数値リスト
+    def update_possibilities(list)
+      list.compact!
+      @possibilities = @possibilities.nil? ? list : list & @possibilities
     end
   end
 end
