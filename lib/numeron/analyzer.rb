@@ -7,39 +7,17 @@ module Numeron
       @calculator = calculator
     end
 
-    # 次の1手の計算
-    # @param [Symbol] mode :average or :worst
-    # @return [Hash] {recommend: [Array], size: Number}
-    def run(mode = :average, options = {})
-      case mode
-      when :average
-        run_average_mode(options[:cases])
-      when :worst
-        run_worstcase_mode(options[:worst_case])
-      when :possibilities
-        run_possibilities
-      end
-    end
+    # 適当に
+    def run_deep_search
+      result = run_worstcase_mode({eat: 1, bite: 2})
+      result2 = run_worstcase_mode({eat: 0, bite: 3})
 
-    # 最悪のケースを0e1b, 1e0bと想定し、それぞれの結果が出た際に可能性の平均値が最も少なくなるケースを推定する
-    def run_average_mode(cases = nil)
-      cases ||= [
-        {eat: 0, bite: 1},
-        {eat: 1, bite: 0}
-      ]
-      recommend = []
-      min_size = 10000
-      all_list.each do |f|
-        average = calc_average(f, cases)
-        if min_size == average
-          recommend << f
-        elsif min_size > average
-          recommend = [f]
-          min_size = average
-        end
+      x = result[:recommend] & result2[:recommend]
+      if x.size > 0
+        return {recommend: x, size: (result[:size] + result[:size]).to_f / 2.0}
+      else
+        return result.size >= result2.size ? result2 : result
       end
-
-      { recommend: recommend, size: min_size }
     end
 
     # 最悪のケースを0e1bと推定し、その結果として最も可能性の数が最も少なくなるケースを推定する
@@ -61,16 +39,17 @@ module Numeron
       { recommend: recommend, size: min_size }
     end
 
-    def run_possibilities
-      possibilities = @calculator.possibilities.clone
+    def run_possibilities(possibilities = [])
+      possibilities = @calculator.possibilities.clone if possibilities.size == 0
 
       recommend = []
       min_size = 10000
       cases = [
-        {eat: 0, bite: 1},
-        {eat: 0, bite: 2},
+        {eat: 0, bite: 0},
         {eat: 1, bite: 0},
-        {eat: 1, bite: 1}
+        {eat: 1, bite: 1},
+        {eat: 1, bite: 2},
+        {eat: 2, bite: 0}
       ]
       possibilities.each do |f|
         average = calc_average(f, cases, true)
@@ -96,6 +75,8 @@ module Numeron
         result << _calculator.possibilities.size
       end
 
+      # attack.tapp
+      # result.tapp
       n = 0
       sum = 0
       result.each do |f|

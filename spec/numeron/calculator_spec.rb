@@ -273,6 +273,7 @@ describe Numeron::Calculator do
   end
 
   describe "scenario" do
+
     it "1e0b, 1e2b" do
       calc.input('348', 1, 0)
       calc.input('123', 1, 2)
@@ -292,6 +293,7 @@ describe Numeron::Calculator do
       calc.input('123', 0, 1)
       calc.input('245', 0, 1)
       calc.input('367', 0, 1)
+      calc.possibilities.should have(26).items
       calc.input('890', 0, 0)
       calc.input('416', 0, 1)
       calc.possibilities.should =~ ['571', '751']

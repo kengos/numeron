@@ -95,23 +95,23 @@ module Numeron
     def think
       puts "... thinking"
       puts "possibilities: " + @calc.possibilities.size.to_s
+      if @calc.possibilities.size <= 10
+        @calc.possibilities.each_with_index do |f, i|
+          print f
+          print i != 0 && i % 5 == 0 ? "\n" : ", "
+        end
+        print "\n"
+      end
+
       analyzer = Numeron::Analyzer.new(@calc)
       if @calc.possibilities.size > 2
         result = {recommend: 0}
-        if @calc.possibilities.size > 64
-          result = analyzer.run_average_mode
-        elsif @calc.possibilities.size > 21
-          result = analyzer.run_possibilities
+        if @calc.possibilities.size >= 72
+          result = analyzer.run_worstcase_mode
+        elsif @calc.possibilities.size > 26
+          result = analyzer.run_deep_search
         else
-          cases = [
-            {eat: 0, bite: 0},
-            {eat: 0, bite: 1},
-            {eat: 0, bite: 2},
-            {eat: 1, bite: 0},
-            {eat: 1, bite: 1},
-            {eat: 2, bite: 0}
-          ]
-          result = analyzer.run_average_mode(cases)
+          result = analyzer.run_possibilities
         end
         if result[:recommend].size > 0
           puts "Analyzer Answer: " + result[:recommend].sample.to_s
