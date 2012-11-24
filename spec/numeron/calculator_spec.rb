@@ -50,6 +50,35 @@ describe Numeron::Calculator do
     end
   end
 
+  describe '#rollback' do
+    before {
+      calc.input('123', 0, 3)
+      calc.input('231', 0, 3)
+    }
+
+    context 'rollback 1' do
+      before { calc.rollback }
+      specify do
+        calc.possibilities.should =~ %w(231 312)
+        calc.mays[0].should =~ [2, 3]
+        calc.mays[1].should =~ [1, 3]
+        calc.mays[2].should =~ [1, 2]
+        calc.histories.should have(1).items
+      end
+    end
+
+    context 'rollback 2' do
+      before { calc.rollback(2) }
+      specify do
+        calc.possibilities.should be_nil
+        calc.mays[0].should =~ (0..9).to_a
+        calc.mays[1].should =~ (0..9).to_a
+        calc.mays[2].should =~ (0..9).to_a
+        calc.histories.should have(0).items
+      end
+    end
+  end
+
   describe "#shuffle" do
     it "0e3b" do
       calc.input('123', 0, 3)

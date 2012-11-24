@@ -14,10 +14,15 @@ module Numeron
     attr_accessor :slash_number
 
     def initialize(answer_size = 3)
+      @answer_size = answer_size
+      init
+    end
+
+    def init
       @histories = []
       @possibilities = nil
-      @mays = [(0..9).to_a, (0..9).to_a, (0..9).to_a]
-      @answer_size = answer_size
+      @mays = []
+      @answer_size.times {|i| @mays[i] = (0..9).to_a}
       @slash_number = nil
     end
 
@@ -35,7 +40,6 @@ module Numeron
         raise ArgumentError, 'Invalid argument. '
       end
 
-      @histories << {attack: attack, eat: eat, bite: bite}
 
       if eat == 0 && bite == 0
         zero_eat_zero_bite(attack)
@@ -53,14 +57,21 @@ module Numeron
         one_eat_zero_bite(attack)
       elsif eat == 2 && bite == 0
         two_eat_zero_bite(attack)
-      elsif eat == 3 && bite == 0
-        @possibilities = []
-      else
-        return false
       end
-      return true
+      @histories << {attack: attack, eat: eat, bite: bite, mays: @mays.clone, possibilities: @possibilities.clone}
     end
 
+    def rollback(num = 1)
+      num = (num + 1) * (-1)
+      history = @histories[num]
+      if history.nil?
+        init
+      else
+        @mays = history[:mays].clone
+        @possibilities = history[:possibilities].clone
+        @histories = @histories[0..num]
+      end
+    end
 
     # シャッフル
     def shuffle
