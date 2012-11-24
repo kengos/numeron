@@ -104,20 +104,9 @@ module Numeron
       end
 
       analyzer = Numeron::Analyzer.new(@calc)
-      if @calc.possibilities.size > 2
-        result = {recommend: 0}
-        if @calc.possibilities.size >= 72
-          result = analyzer.run_worstcase_mode
-        elsif @calc.possibilities.size > 26
-          result = analyzer.run_deep_search
-        else
-          result = analyzer.run_possibilities
-        end
-        if result[:recommend].size > 0
-          puts "Analyzer Answer: " + result[:recommend].sample.to_s
-        else
-          puts "Calculator Error."
-        end
+      result = analyzer.run
+      result[:recommend].each do |f|
+        puts "Analyzer answer: " + f.to_s
       end
       puts "Possibilitiy list random: " + @calc.possibilities.sample.to_s
     end

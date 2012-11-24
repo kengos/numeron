@@ -75,6 +75,9 @@ module Numeron
       end
     end
 
+    # attackの値を実行後、考えられるeat, biteの組み合わせの結果、どの程度候補数が絞り込まれるかをシミュレートします
+    # @param [String] attack answer_sizeと同じ幅
+    # @return [Array] {eat: x, bite: y, possibilites: []}の組み合わせ分の配列
     def simulate(attack)
       raise ArgumentError, 'Invalid argument. attack size must be ' + @answer_size.to_s if attack.size != @answer_size
       result = []
