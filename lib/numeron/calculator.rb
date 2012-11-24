@@ -61,6 +61,8 @@ module Numeron
       @histories << {attack: attack, eat: eat, bite: bite, mays: @mays.clone, possibilities: @possibilities.clone}
     end
 
+    # 状態を指定した回数分戻します
+    # @param [Integer] num 戻す状態の回数
     def rollback(num = 1)
       num = (num + 1) * (-1)
       history = @histories[num]
@@ -71,6 +73,20 @@ module Numeron
         @possibilities = history[:possibilities].clone
         @histories = @histories[0..num]
       end
+    end
+
+    def simulate(attack)
+      raise ArgumentError, 'Invalid argument. attack size must be ' + @answer_size.to_s if attack.size != @answer_size
+      result = []
+      @answer_size.times do |eat|
+        0.upto(@answer_size - eat) do |bite|
+          next if eat == @answer_size - 1 && bite == 1
+          input(attack, eat, bite)
+          result << {eat: eat, bite: bite, possibilities: @possibilities.clone }
+          rollback
+        end
+      end
+      result
     end
 
     # シャッフル

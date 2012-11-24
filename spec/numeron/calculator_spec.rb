@@ -79,6 +79,60 @@ describe Numeron::Calculator do
     end
   end
 
+  describe '#simulate' do
+    before { calc.input('123', 0, 1) }
+    let(:result) { calc.simulate('245') }
+    it { result.should have(8).items }
+    context '0' do
+      subject { result[0] }
+      its([:eat]) { should == 0 }
+      its([:bite]) { should == 0 }
+      its([:possibilities]) { should have(80).items }
+    end
+    context '1' do
+      subject { result[1] }
+      its([:eat]) { should == 0 }
+      its([:bite]) { should == 1 }
+      its([:possibilities]) { should have(75).items }
+    end
+    context '2' do
+      subject { result[2] }
+      its([:eat]) { should == 0 }
+      its([:bite]) { should == 2 }
+      its([:possibilities]) { should have(19).items }
+    end
+    context '3' do
+      subject { result[3] }
+      its([:eat]) { should == 0 }
+      its([:bite]) { should == 3 }
+      its([:possibilities]) { should have(1).items }
+    end
+    context '4' do
+      subject { result[4] }
+      its([:eat]) { should == 1 }
+      its([:bite]) { should == 0 }
+      its([:possibilities]) { should have(45).items }
+    end
+    context '5' do
+      subject { result[5] }
+      its([:eat]) { should == 1 }
+      its([:bite]) { should == 1 }
+      its([:possibilities]) { should have(18).items }
+    end
+    context '6' do
+      subject { result[6] }
+      its([:eat]) { should == 1 }
+      its([:bite]) { should == 2 }
+      its([:possibilities]) { should have(2).items }
+    end
+    context '7' do
+      subject { result[7] }
+      its([:eat]) { should == 2 }
+      its([:bite]) { should == 0 }
+      its([:possibilities]) { should have(11).items }
+    end
+  end
+
   describe "#shuffle" do
     it "0e3b" do
       calc.input('123', 0, 3)
