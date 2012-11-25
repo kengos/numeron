@@ -136,8 +136,12 @@ p result
 
 ヌメロンの解の可能性として考えられるものを計算する部分。
 
+### input(attack, eat, bite)
 
-基本
+コールした数値(attack)とその結果のeatの数、biteの数を渡す。<br>
+
+過去のコールした数値とその結果および、今回コールした数値とその結果を元に解として可能性のあるデータを計算する
+
 
 ```ruby
 calc = Numeron::Calculator.new
@@ -150,22 +154,19 @@ p calc.possibilities
 # => ["240", "246", "247", "248", "249", "205", "265", "275", "285", "295", "345"]
 ```
 
-Shuffle対応(ほとんどテストはしていない)
+### simulate(attack)
 
+attackの結果をシミュレートする。
+
+0e0b, 0e1b, 0e2b ...それぞれの結果が生じたことを仮定して、その結果、解として可能性があるデータを計算し、配列で返す。
+
+戻り値
 ```ruby
-calc = Numeron::Calculator.new
-calc.input('123', 0, 3)
-calc.shuffle # シャッフルされた
-p calc.possibilities.size
-# => 6
-
-calc = Numeron::Calculator.new
-calc.input('123', 1, 1)
-p calc.possibilities.size
-# => 42
-calc.shuffle
-p calc.possibilities.size
-# => 126
+[
+  { eat: 0, bite: 0, possibilities: ['123', '234'..],
+  { eat: 0, bite: 1, possibilities: ['123', '234' ..],
+  ...
+]
 ```
 
 以下の2つの変数を用いている
@@ -182,14 +183,15 @@ p calc.possibilities.size
 
 ## Numeron::Analyzer
 
-案がなかったので、以下3つの分析方法を適当に実装。<br>
-計算量はまったく考慮していない
+https://github.com/kengos/numeron/blob/master/lib/numeron/analyzer.rb
 
-0e1bを最悪ケースとして、このケースが出た場合に、最も可能性リストが少なくなる数値を計算する機能
+### run メソッド
 
-0e1b, 1e0bを最悪ケースとして、これらのケースが出た場合に、最も可能性リストの平均値が少なくなる数値を計算する機能
-
-可能性リスト中から、最も可能性リストが少なくなる数値を計算する機能
+1. 考えられる全ての解の一覧を作成する
+2. exclusion_equivalency_list で結果が同値であるデータを除外する(結構適当)
+3. 2.で作成したデータ全てに対して、全ての考えられる結果によって生じた解の可能性を一覧を作成する(Calculator#simulate https://github.com/kengos/numeron/blob/master/lib/numeron/calculator.rb#L81)<br>
+例) '123' => 0e1bの状態で '245'を入力した場合、0e0b, 0e1b ...のそれぞれの結果ごとの解の可能性の一覧を作成する
+4. 3.の結果の平均値を評価値として、この評価値が最小となる2.のデータをAnazlyzerが算出した解とする
 
 ## Contributing
 
